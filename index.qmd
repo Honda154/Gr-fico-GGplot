@@ -1,0 +1,93 @@
+---
+title: "analisis de datos demograficos de paises"
+author: "Daniel Amador"
+format: html
+lang: es
+toc: true
+theme: lux
+---
+
+#metadatos, codigo r, narrativa.
+
+# carga de biblioteca
+
+```{r}
+#| label: carga-biblioteca
+#| warning: false
+#| message: false
+#| code-fold: true
+library(tidyverse)
+library(scales)
+library(ggthemes)
+library(hrbrthemes)
+library(plotly)
+```
+
+
+# carga de datos
+```{r}
+#| label: carga-datos
+#| warning: false
+#| message: false
+#| code-fold: true
+# Carga de los datos de países
+paises <- read_csv(
+  "https://raw.githubusercontent.com/gf0604-procesamientodatosgeograficos/2025-i/refs/heads/main/datos/natural-earth/paises.csv"
+)
+```
+# introducción
+
+Este documento contiene visualizaciones de datos socieconómico de paises y territorios
+
+# relación entre PIB per capita y esperanza de vida al nacer 
+```{r}
+#| label: relacion-pib-ev
+#| warning: false
+#| message: false
+
+# grafico de dispersion del PIB per capita vs esperanza de vida al nacer 
+
+# Paises de Africa coloreados por INCOME_GRP
+grafico_ggplot2 <-
+  paises |>
+  ggplot(aes(x = GDP_PC, y = LIFE_EXPECTANCY, color = CONTINENT)) +
+geom_point(aes(
+    # datos que se muestran al colocar el ratón sobre un punto
+    text = paste0(
+      "PIB per cápita: ", GDP_PC, "\n",
+      "Países", NAME, "\n",
+      "Esperanza de vida: ", LIFE_EXPECTANCY
+    )
+  )) +
+  scale_size_continuous(labels = comma) +
+  scale_x_continuous(labels = comma, limits = c(0, NA)) +
+ggtitle("PIB per cápita vs esperanza de vida al nacer") +
+  xlab("PIB pércapita (USD)") +
+  ylab("Esperanza de vida al nacer (años)") +
+  labs(
+    color = "continente" ,
+    subtitle = "Datos de todo el mundo" ,
+    caption = "Fuentes: Natural Earth"
+  ) + 
+  theme_ipsum()
+
+ggplotly(grafico_ggplot2, tooltip = "text")  |> 
+  config(locale = 'es')
+```
+
+```{r}
+#| label: paneles
+#| warning: false
+#| message: false
+
+# Grafico
+
+# Gráfico de dispersión de PIB per cápita vs esperanza de vida al nacer
+# + paneles por continente
+paises |>
+  ggplot(aes(x = GDP_PC, y = LIFE_EXPECTANCY)) +
+  geom_point() +
+  facet_grid(REGION_UN ~ INCOME_GRP) +
+  scale_x_continuous(labels = comma, limits = c(0, NA))
+```
+
