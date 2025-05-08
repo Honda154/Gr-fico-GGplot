@@ -74,20 +74,3 @@ ggtitle("PIB per cápita vs esperanza de vida al nacer") +
 ggplotly(grafico_ggplot2, tooltip = "text")  |> 
   config(locale = 'es')
 ```
-
-```{r}
-#| label: paneles
-#| warning: false
-#| message: false
-
-# Grafico
-
-# Gráfico de dispersión de PIB per cápita vs esperanza de vida al nacer
-# + paneles por continente
-paises |>
-  ggplot(aes(x = GDP_PC, y = LIFE_EXPECTANCY)) +
-  geom_point() +
-  facet_grid(REGION_UN ~ INCOME_GRP) +
-  scale_x_continuous(labels = comma, limits = c(0, NA))
-```
-
